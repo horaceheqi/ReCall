@@ -1,0 +1,114 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
+	}
+}
+
+apply plugin:'java'
+apply plugin:'idea'
+apply plugin:'org.springframework.boot'
+
+idea {
+	module  {
+		downloadSources=true
+   }
+}
+
+jar {
+	baseName = 'ReCall'
+	version =  '1.0.0'
+}
+
+springBoot {
+	executable = true
+}
+
+repositories {
+	mavenLocal()
+	maven { url 'http://10.129.130.162:7180/nexus/content/groups/public/' }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+	//	支持 Web 应用开发，包含 Tomcat 和 spring-mvc
+	compile("org.springframework.boot:spring-boot-starter-web")
+	//  添加适用于生产环境的功能，如性能指标和监测等功能
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+	//	模板引擎
+	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile('net.sourceforge.nekohtml:nekohtml:1.9.22')
+	
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+	// 	安全
+	compile("org.springframework.boot:spring-boot-starter-security")
+	  // 开发工具 - 生产环境要禁用
+	compile("org.springframework.boot:spring-boot-devtools")
+	//excel
+	compile("org.apache.poi:poi:3.10.1")
+
+	//	支持使用 JDBC 访问数据库
+	compile("org.springframework.boot:spring-boot-starter-jdbc")
+
+	//	MyBatis对Spring Boot支持，可以使用更少的配置
+	compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.2.0")
+
+	// Mysql/ Oracle / DataSource
+	compile("org.apache.tomcat:tomcat-jdbc")
+	compile("mysql:mysql-connector-java")
+
+	// alibaba
+	// compile("com.alibaba:druid:1.0.13")
+	compile("com.cyou:druid-cyou:1.0.13")
+	compile("com.alibaba:fastjson:1.2.5")
+
+	// Apache Commons
+	compile 'org.apache.commons:commons-compress:1.13'
+	compile("org.apache.commons:commons-lang3:3.4")
+	compile("commons-io:commons-io:2.4")
+	compile("com.alibaba:druid:1.0.31")
+	// google
+	compile 'com.google.code.gson:gson:2.1'
+
+	// Swagger support http://ip:port/swagger/index.html
+	compile("com.mangofactory:swagger-springmvc:1.0.2")
+	
+	// 定制包
+	compile fileTree(dir: 'libs', include: '*.jar')
+	
+	// 测试
+	testCompile("org.springframework.boot:spring-boot-starter-test")
+	testCompile("junit:junit")
+	testCompile('com.jayway.jsonpath:json-path')
+}
+
+task makeAppLibs(type:Copy,dependsOn:['build']){
+	into 'build/app/ReCall'
+	from('build/libs') {
+		include '*.jar'}
+}
+task makeAppConf(type:Copy,dependsOn:['makeAppLibs']){
+	into 'build/app/ReCall/config'
+	from('build/resources/main') {
+	include 'application.properties'
+	include 'application-context.xml'
+	include 'logback-spring.xml'
+	}
+}
+task makeAppEnv(type:Copy,dependsOn:['makeAppConf']){
+	into 'build/app/ReCall'
+	from('.') {
+	include 'ReCall-1.0.0.conf'
+	}
+}
+task packageApp(type:Zip,dependsOn:['makeAppEnv']){
+from 'build/app'
+}
+
+
+
+

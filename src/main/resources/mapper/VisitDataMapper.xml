@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyou.bi.ms.ds.recall.dao.VisitDataMapper" >
+  <resultMap id="BaseResultMap" type="com.cyou.bi.ms.ds.recall.bean.VisitData" >
+    <result column="cnmaster" property="cnmaster" jdbcType="VARCHAR" />
+    <result column="visit_history" property="visitHistory" jdbcType="VARCHAR" />
+    <result column="dt" property="dt" jdbcType="DATE" />
+  </resultMap>
+  <!-- 保存以前的回访记录（保留历史数据） -->
+  <insert id="insertData" parameterType="com.cyou.bi.ms.ds.recall.bean.VisitData" >
+    insert into visit_data (cnmaster, visit_history, dt
+      )
+    values (#{cnmaster,jdbcType=VARCHAR}, #{visitHistory,jdbcType=VARCHAR}, #{dt,jdbcType=DATE}
+      )
+  </insert>
+  <!-- 查询历史的回访记录数据 -->
+  <select id="selectByCnmaster" resultMap="BaseResultMap">
+   SELECT  visit_history, dt FROM  visit_data
+    where  cnmaster=#{cnmaster,jdbcType=VARCHAR};
+  </select>
+  <insert id="insertSelective" parameterType="com.cyou.bi.ms.ds.recall.bean.VisitData" >
+    insert into visit_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cnmaster != null" >
+        cnmaster,
+      </if>
+      <if test="visitHistory != null" >
+        visit_history,
+      </if>
+      <if test="dt != null" >
+        dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cnmaster != null" >
+        #{cnmaster,jdbcType=VARCHAR},
+      </if>
+      <if test="visitHistory != null" >
+        #{visitHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="dt != null" >
+        #{dt,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+</mapper>

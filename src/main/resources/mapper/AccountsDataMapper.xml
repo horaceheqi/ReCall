@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyou.bi.ms.ds.recall.dao.AccountsDataMapper" >
+  <resultMap id="BaseResultMap" type="com.cyou.bi.ms.ds.recall.bean.AccountsData" >
+    <result column="cnmaster" property="cnmaster" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_level" property="roleLevel" jdbcType="INTEGER" />
+    <result column="role_groupid" property="roleGroupid" jdbcType="INTEGER" />
+    <result column="equipscore" property="equipscore" jdbcType="VARCHAR" />
+    <result column="xfscore" property="xfscore" jdbcType="VARCHAR" />
+    <result column="xlscore" property="xlscore" jdbcType="VARCHAR" />
+    <result column="bsscore" property="bsscore" jdbcType="VARCHAR" />
+    <result column="logon_flag" property="logonFlag" jdbcType="INTEGER" />
+    <result column="cn_guid" property="cnGuid" jdbcType="VARCHAR" />
+    <result column="dt" property="dt" jdbcType="DATE" />
+  </resultMap>
+  <!-- selectByCnmaster 按cnmaster查询用户的角色-->
+  <select id="selectByCnmaster" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select cnmaster, role_name, role_level, 
+      role_groupid,equipscore,xfscore,xlscore,bsscore,logon_flag,cn_guid
+     from accounts_data
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR} order by role_level desc;
+  </select>
+
+  <insert id="insert" parameterType="com.cyou.bi.ms.ds.recall.bean.AccountsData" >
+    insert into accounts_data (cnmaster, role_name, role_level, 
+      role_groupid, cn_guid, dt
+      )
+    values (#{cnmaster,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{roleLevel,jdbcType=INTEGER}, 
+      #{roleGroupid,jdbcType=INTEGER}, #{cnGuid,jdbcType=VARCHAR}, #{dt,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cyou.bi.ms.ds.recall.bean.AccountsData" >
+    insert into accounts_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cnmaster != null" >
+        cnmaster,
+      </if>
+      <if test="roleName != null" >
+        role_name,
+      </if>
+      <if test="roleLevel != null" >
+        role_level,
+      </if>
+      <if test="roleGroupid != null" >
+        role_groupid,
+      </if>
+      <if test="cnGuid != null" >
+        cn_guid,
+      </if>
+      <if test="dt != null" >
+        dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cnmaster != null" >
+        #{cnmaster,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleLevel != null" >
+        #{roleLevel,jdbcType=INTEGER},
+      </if>
+      <if test="roleGroupid != null" >
+        #{roleGroupid,jdbcType=INTEGER},
+      </if>
+      <if test="cnGuid != null" >
+        #{cnGuid,jdbcType=VARCHAR},
+      </if>
+      <if test="dt != null" >
+        #{dt,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyou.bi.ms.ds.recall.dao.RecallSystemDataMapper" >
+  <resultMap id="BaseResultMap" type="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" >
+    <id column="cnmaster" property="cnmaster" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="loss_date" property="lossDate" jdbcType="DATE" />
+    <result column="loss_money" property="lossMoney" jdbcType="DOUBLE" />
+    <result column="recall_date" property="recallDate" jdbcType="DATE" />
+    <result column="recall_money" property="recallMoney" jdbcType="DOUBLE" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="loss_days" property="lossDays" jdbcType="INTEGER" />
+    <result column="serverid" property="serverid" jdbcType="INTEGER" />
+    <result column="gamename" property="gamename" jdbcType="VARCHAR" />
+    <result column="generate_date" property="generateDate" jdbcType="DATE" />
+    <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+    <result column="interpose_date" property="interposeDate" jdbcType="VARCHAR" />
+    <result column="interpose_status" property="interposeStatus" jdbcType="BIT" />
+    <result column="is_loss" property="isLoss" jdbcType="BIT" />
+    <result column="is_recall" property="isRecall" jdbcType="BIT" />
+    <result column="has_system_send_gift" property="hasSystemSendGift" jdbcType="BIT" />
+    <result column="has_manual_send_gift" property="hasManualSendGift" jdbcType="BIT" />
+    <result column="follower_number" property="followerNumber" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" extends="BaseResultMap" >
+    <result column="visit_history" property="visitHistory" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cnmaster, status, serverid,loss_date,loss_days, loss_money, recall_date, recall_money, level, gamename, 
+    generate_date, phone_number, interpose_date, interpose_status, is_loss, is_recall, 
+    has_system_send_gift, has_manual_send_gift, follower_number
+  </sql>
+  <sql id="Blob_Column_List" >
+    visit_history
+  </sql>
+  <!-- 根据不同条件返回数据总条数 -->
+  <select id="selectByConditionNum" resultType="Integer">
+   SELECT count(*) as totalCount FROM recall_system_data 
+	<where> 
+	 <if test="gamename!=null and gamename!=''">
+	  gamename=#{gamename,jdbcType=VARCHAR}
+	 </if>
+	 <if test="cnmaster !=null and cnmaster !=''">
+	  and cnmaster =#{cnmaster,jdbcType=VARCHAR}
+	 </if>
+	 <if test="level !=null and level !=''">
+	  and level =#{level,jdbcType=INTEGER}
+	 </if>
+	 <if test="serverid !=null and serverid !=''">
+	  and serverid =#{serverid,jdbcType=INTEGER}
+	 </if>
+	 <if test="startLossDays !=null and startLossDays !=''">
+	  and loss_days >=#{startLossDays,jdbcType=INTEGER}
+	 </if>
+	 <if test="endLossDays !=null and endLossDays !=''">
+	  and loss_days &lt;=#{endLossDays,jdbcType=INTEGER}
+	 </if>
+	  <if test="status !=null and status !=''">
+	  and status =#{status,jdbcType=VARCHAR}
+	 </if>
+	 <if test="startLossDate!=null and startLossDate!=''">
+	  and loss_date >= #{startLossDate,jdbcType=DATE}
+	 </if>
+	 <if test="endLossDate!=null and endLossDate!=''">
+	  and loss_date &lt;= #{endLossDate,jdbcType=DATE}
+	 </if>
+	 <if test="startInterposeDate!=null and startInterposeDate!=''">
+	  and interpose_date >= #{startInterposeDate,jdbcType=DATE}
+	 </if>
+	 <if test="endInterposeDate!=null and endInterposeDate!=''">
+	  and interpose_date &lt;= #{endInterposeDate,jdbcType=DATE}
+	 </if>
+	 <if test="startRecallDate!=null and startRecallDate!=''">
+	  and recall_date >= #{startRecallDate,jdbcType=DATE}
+	 </if>
+	 <if test="endRecallDate!=null and endRecallDate!=''">
+	  and recall_date &lt;= #{endRecallDate,jdbcType=DATE}
+	 </if>
+	 <if test="interposeStatus!=null and interposeStatus!=''">
+	  and interpose_status = #{interposeStatus,jdbcType=BIT}
+	 </if>
+	 <if test="hasSystemSendGift!=null and hasSystemSendGift!=''">
+	  and has_system_send_gift = #{hasSystemSendGift,jdbcType=BIT}
+	 </if>
+	 <if test="hasManualSendGift!=null and hasManualSendGift!=''">
+	  and has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT}
+	 </if>
+	 <if test="followerNumber!=null and followerNumber!=''">
+	  and follower_number=#{followerNumber,jdbcType=VARCHAR}
+	 </if>
+  </where>
+  </select>
+  
+  <!-- <if test="isRecall!=null and isRecall!=''">
+	  and is_recall = #{isRecall,jdbcType=BIT}
+	 </if>
+	 <if test="isLoss!=null and isLoss!=''">
+	  and is_loss = #{isLoss,jdbcType=BIT}
+	 </if>   <if test="startGenerateDate!=null and startGenerateDate!=''">
+	  and generate_date >= #{startGenerateDate,jdbcType=DATE}
+	 </if>
+	 <if test="endGenerateDate!=null and endGenerateDate!=''">
+	  and generate_date &lt;= #{endGenerateDate,jdbcType=DATE}
+	 </if>-->
+  <!-- CASE WHEN STATUS='在线' THEN 0 ELSE DATEDIFF(NOW(),loss_date)  END AS lossDays -->
+  <!-- 按条件查询数据 (分页查询)-->
+  <select id="selectByCondition" resultMap="ResultMapWithBLOBs">
+   SELECT cnmaster,serverid,STATUS,loss_days,loss_date, loss_money, recall_date,
+    recall_money, LEVEL, gamename, 
+    phone_number, interpose_date, 
+	interpose_status, 
+    has_system_send_gift, has_manual_send_gift, 
+	follower_number,visit_history FROM recall_system_data 
+	<where> 
+	 <if test="gamename!=null and gamename!=''">
+	  gamename=#{gamename,jdbcType=VARCHAR}
+	 </if>
+	 <if test="cnmaster !=null and cnmaster !=''">
+	  and cnmaster =#{cnmaster,jdbcType=VARCHAR}
+	 </if>
+	 <if test="level !=null and level !=''">
+	  and level =#{level,jdbcType=INTEGER}
+	 </if>
+	 <if test="serverid !=null and serverid !=''">
+	  and serverid =#{serverid,jdbcType=INTEGER}
+	 </if>
+	 <if test="startLossDays !=null and startLossDays !=''">
+	  and loss_days >=#{startLossDays,jdbcType=INTEGER}
+	 </if>
+	 <if test="endLossDays !=null and endLossDays !=''">
+	  and loss_days &lt;=#{endLossDays,jdbcType=INTEGER}
+	 </if>
+	 <if test="status !=null and status !=''">
+	  and status =#{status,jdbcType=VARCHAR}
+	 </if>
+	 <if test="startLossDate!=null and startLossDate!=''">
+	  and loss_date >= #{startLossDate,jdbcType=DATE}
+	 </if>
+	 <if test="endLossDate!=null and endLossDate!=''">
+	  and loss_date &lt;= #{endLossDate,jdbcType=DATE}
+	 </if>
+	 <if test="startInterposeDate!=null and startInterposeDate!=''">
+	  and interpose_date >= #{startInterposeDate,jdbcType=DATE}
+	 </if>
+	 <if test="endInterposeDate!=null and endInterposeDate!=''">
+	  and interpose_date &lt;= #{endInterposeDate,jdbcType=DATE}
+	 </if>
+	 <if test="startRecallDate!=null and startRecallDate!=''">
+	  and recall_date >= #{startRecallDate,jdbcType=DATE}
+	 </if>
+	 <if test="endRecallDate!=null and endRecallDate!=''">
+	  and recall_date &lt;= #{endRecallDate,jdbcType=DATE}
+	 </if>
+	 <if test="interposeStatus!=null and interposeStatus!=''">
+	  and interpose_status = #{interposeStatus,jdbcType=BIT}
+	 </if>
+	 <if test="hasSystemSendGift!=null and hasSystemSendGift!=''">
+	  and has_system_send_gift = #{hasSystemSendGift,jdbcType=BIT}
+	 </if>
+	 <if test="hasManualSendGift!=null and hasManualSendGift!=''">
+	  and has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT}
+	 </if>
+	 <if test="followerNumber!=null and followerNumber!=''">
+	  and follower_number=#{followerNumber,jdbcType=VARCHAR}
+	 </if>
+  </where>
+     order by  cnmaster limit #{startNum},#{pageSize};
+  </select>
+  <!-- 更新回访记录明细 -->
+  <update id="updateByCnmasterVisit" parameterType="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" >
+    update recall_system_data
+    <set >
+      <if test="visitHistory != null" >
+         visit_history = #{visitHistory,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="interposeDate != null" >
+         interpose_date= #{interposeDate,jdbcType=DATE},
+      </if>
+       <if test="interposeStatus != null" >
+         interpose_status = #{interposeStatus,jdbcType=BIT},
+      </if>
+      <if test="hasManualSendGift != null" >
+         has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT},
+      </if>
+    </set>
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  <!-- 导出数据Excel表 -->
+  <select id="selectByConditionExcel" resultMap="ResultMapWithBLOBs">
+   SELECT gamename,loss_days,loss_date,recall_date,cnmaster,LEVEL,serverid,
+     interpose_date,interpose_status,STATUS,recall_money,
+	 has_manual_send_gift,follower_number FROM recall_system_data 
+	<where> 
+	 <if test="gamename!=null and gamename!=''">
+	  gamename=#{gamename,jdbcType=VARCHAR}
+	 </if>
+	 <if test="cnmaster !=null and cnmaster !=''">
+	  and cnmaster =#{cnmaster,jdbcType=VARCHAR}
+	 </if>
+	 <if test="level !=null and level !=''">
+	  and level =#{level,jdbcType=INTEGER}
+	 </if>
+	 <if test="serverid !=null and serverid !=''">
+	  and serverid =#{serverid,jdbcType=INTEGER}
+	 </if>
+	 <if test="startLossDays !=null and startLossDays !=''">
+	  and loss_days >=#{startLossDays,jdbcType=INTEGER}
+	 </if>
+	 <if test="endLossDays !=null and endLossDays !=''">
+	  and loss_days &lt;=#{endLossDays,jdbcType=INTEGER}
+	 </if>
+	 <if test="status !=null and status !=''">
+	  and status =#{status,jdbcType=VARCHAR}
+	 </if>
+	 <if test="startLossDate!=null and startLossDate!=''">
+	  and loss_date >= #{startLossDate,jdbcType=DATE}
+	 </if>
+	 <if test="endLossDate!=null and endLossDate!=''">
+	  and loss_date &lt;= #{endLossDate,jdbcType=DATE}
+	 </if>
+	 <if test="startInterposeDate!=null and startInterposeDate!=''">
+	  and interpose_date >= #{startInterposeDate,jdbcType=DATE}
+	 </if>
+	 <if test="endInterposeDate!=null and endInterposeDate!=''">
+	  and interpose_date &lt;= #{endInterposeDate,jdbcType=DATE}
+	 </if>
+	 <if test="startRecallDate!=null and startRecallDate!=''">
+	  and recall_date >= #{startRecallDate,jdbcType=DATE}
+	 </if>
+	 <if test="endRecallDate!=null and endRecallDate!=''">
+	  and recall_date &lt;= #{endRecallDate,jdbcType=DATE}
+	 </if>
+	 <if test="interposeStatus!=null and interposeStatus!=''">
+	  and interpose_status = #{interposeStatus,jdbcType=BIT}
+	 </if>
+	 <if test="hasSystemSendGift!=null and hasSystemSendGift!=''">
+	  and has_system_send_gift = #{hasSystemSendGift,jdbcType=BIT}
+	 </if>
+	 <if test="hasManualSendGift!=null and hasManualSendGift!=''">
+	  and has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT}
+	 </if>
+	 <if test="followerNumber!=null and followerNumber!=''">
+	  and follower_number=#{followerNumber,jdbcType=VARCHAR}
+	 </if>
+  </where>
+     order by  cnmaster limit 50000;
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from recall_system_data
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from recall_system_data
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" >
+    insert into recall_system_data (cnmaster, status, loss_date, 
+      loss_money, recall_date, recall_money, 
+      level, gamename, generate_date, 
+      phone_number, interpose_date, interpose_status, 
+      is_loss, is_recall, has_system_send_gift, 
+      has_manual_send_gift, follower_number, visit_history
+      )
+    values (#{cnmaster,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{lossDate,jdbcType=DATE}, 
+      #{lossMoney,jdbcType=DOUBLE}, #{recallDate,jdbcType=DATE}, #{recallMoney,jdbcType=DOUBLE}, 
+      #{level,jdbcType=INTEGER}, #{gamename,jdbcType=VARCHAR}, #{generateDate,jdbcType=DATE}, 
+      #{phoneNumber,jdbcType=VARCHAR}, #{interposeDate,jdbcType=VARCHAR}, #{interposeStatus,jdbcType=BIT}, 
+      #{isLoss,jdbcType=BIT}, #{isRecall,jdbcType=BIT}, #{hasSystemSendGift,jdbcType=BIT}, 
+      #{hasManualSendGift,jdbcType=BIT}, #{followerNumber,jdbcType=VARCHAR}, #{visitHistory,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" >
+    update recall_system_data
+    <set >
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="lossDate != null" >
+        loss_date = #{lossDate,jdbcType=DATE},
+      </if>
+      <if test="lossMoney != null" >
+        loss_money = #{lossMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="recallDate != null" >
+        recall_date = #{recallDate,jdbcType=DATE},
+      </if>
+      <if test="recallMoney != null" >
+        recall_money = #{recallMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="gamename != null" >
+        gamename = #{gamename,jdbcType=VARCHAR},
+      </if>
+      <if test="generateDate != null" >
+        generate_date = #{generateDate,jdbcType=DATE},
+      </if>
+      <if test="phoneNumber != null" >
+        phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="interposeDate != null" >
+        interpose_date = #{interposeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="interposeStatus != null" >
+        interpose_status = #{interposeStatus,jdbcType=BIT},
+      </if>
+      <if test="isLoss != null" >
+        is_loss = #{isLoss,jdbcType=BIT},
+      </if>
+      <if test="isRecall != null" >
+        is_recall = #{isRecall,jdbcType=BIT},
+      </if>
+      <if test="hasSystemSendGift != null" >
+        has_system_send_gift = #{hasSystemSendGift,jdbcType=BIT},
+      </if>
+      <if test="hasManualSendGift != null" >
+        has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT},
+      </if>
+      <if test="followerNumber != null" >
+        follower_number = #{followerNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="visitHistory != null" >
+        visit_history = #{visitHistory,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" >
+    update recall_system_data
+    set status = #{status,jdbcType=VARCHAR},
+      loss_date = #{lossDate,jdbcType=DATE},
+      loss_money = #{lossMoney,jdbcType=DOUBLE},
+      recall_date = #{recallDate,jdbcType=DATE},
+      recall_money = #{recallMoney,jdbcType=DOUBLE},
+      level = #{level,jdbcType=INTEGER},
+      gamename = #{gamename,jdbcType=VARCHAR},
+      generate_date = #{generateDate,jdbcType=DATE},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      interpose_date = #{interposeDate,jdbcType=VARCHAR},
+      interpose_status = #{interposeStatus,jdbcType=BIT},
+      is_loss = #{isLoss,jdbcType=BIT},
+      is_recall = #{isRecall,jdbcType=BIT},
+      has_system_send_gift = #{hasSystemSendGift,jdbcType=BIT},
+      has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT},
+      follower_number = #{followerNumber,jdbcType=VARCHAR},
+      visit_history = #{visitHistory,jdbcType=LONGVARCHAR}
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cyou.bi.ms.ds.recall.bean.RecallSystemData" >
+    update recall_system_data
+    set status = #{status,jdbcType=VARCHAR},
+      loss_date = #{lossDate,jdbcType=DATE},
+      loss_money = #{lossMoney,jdbcType=DOUBLE},
+      recall_date = #{recallDate,jdbcType=DATE},
+      recall_money = #{recallMoney,jdbcType=DOUBLE},
+      level = #{level,jdbcType=INTEGER},
+      gamename = #{gamename,jdbcType=VARCHAR},
+      generate_date = #{generateDate,jdbcType=DATE},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      interpose_date = #{interposeDate,jdbcType=VARCHAR},
+      interpose_status = #{interposeStatus,jdbcType=BIT},
+      is_loss = #{isLoss,jdbcType=BIT},
+      is_recall = #{isRecall,jdbcType=BIT},
+      has_system_send_gift = #{hasSystemSendGift,jdbcType=BIT},
+      has_manual_send_gift = #{hasManualSendGift,jdbcType=BIT},
+      follower_number = #{followerNumber,jdbcType=VARCHAR}
+    where cnmaster = #{cnmaster,jdbcType=VARCHAR}
+  </update>
+</mapper>

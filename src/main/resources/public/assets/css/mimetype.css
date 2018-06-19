@@ -1,0 +1,43 @@
+.audio {
+  background-image: url(../img/mime/audio_64.gif); background-size:cover; width: 24px;height:24px;
+  width:32px; height:32px;
+}
+.code {
+  background-image: url(../img/mime/code_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.compressed {
+  background-image: url(../img/mime/compressed_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.contact {
+  background-image: url(../img/mime/contact_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.data {
+  background-image: url(../img/mime/data_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.default {
+  background-image: url(../img/mime/default_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.folder {
+  background: url(../img/mime/folder_64.png); background-size:cover; width: 24px;height:24px;
+}
+.graphic {
+  background-image: url(../img/mime/graphic_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.image {
+  background-image: url(../img/mime/image_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.pdf {
+  background-image: url(../img/mime/pdf_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.presentation {
+  background-image: url(../img/mime/presentation_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.text {
+  background-image: url(../img/mime/text_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.video {
+  background-image: url(../img/mime/video_64.gif); background-size:cover; width: 24px;height:24px;
+}
+.wordprocessing {
+  background-image: url(../img/mime/wordprocessing_64.gif); background-size:cover; width: 24px;height:24px;
+}

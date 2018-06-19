@@ -1,0 +1,66 @@
+/***
+Error Pages
+***/
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.btn.btn-outline.red {
+    border-color: #e7505a;
+    color: #e7505a;
+    background: 0 0;
+}
+.btn:not(.btn-sm):not(.btn-lg) {
+    line-height: 1.44;
+}
+.btn {
+    outline: 0!important;
+}
+.btn, .form-control {
+    box-shadow: none!important;
+}
+
+.page-full-page {
+  overflow-x: hidden;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fafafa !important; }
+
+.page-full-page .details input {
+  background-color: #ffffff; }
+
+  
+  
+.page-full-page .error-404 {
+  color: #e7505a
+  text-align: left;
+  padding: 20px 20px 0; }
+
+.page-full-page .error- {
+  color: #7bbbd6;
+  text-align: left;
+  padding: 20px 20px 0; }
+  
+
+@media (max-width: 480px) {
+  .page-full-page .error-404 {
+	margin-top: 30px;
+    text-align: left;
+    padding-top: 20px; }
+
